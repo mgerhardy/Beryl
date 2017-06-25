@@ -60,6 +60,8 @@ Beryl offers you to limit the stack size or the allocated memory on the heap
 for each thread
 
 ### Stack memory
+Still WIP :construction:
+
 Each thread gets its own stack with a size of 10K.
 You can provide a callback method which gets invoked when your thread
 runs out of memory.
@@ -69,6 +71,7 @@ This is not considered to be good practice because the
 old stack data needs to be copied into the new stack.
 
 ### Heap memory
+Still WIP :construction:
 
 Beryl overwrites the default STL memory allocator so that it can
 also monitor the heap consuming behaviour of your threads.
@@ -76,6 +79,7 @@ also monitor the heap consuming behaviour of your threads.
 
 ## TODOs :fire:
 
+- [ ] save and restore all volatile registers
 - [ ] allow return values and a better support for parameters :construction:
 - [ ] implement IO functions
 - [ ] implement event/messaging system for communication between threads
