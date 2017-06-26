@@ -8,7 +8,6 @@
 #ifndef SRC_CORE_HPP_
 #define SRC_CORE_HPP_
 
-
 #include "beryl.hpp"
 
 namespace beryl {
@@ -37,7 +36,7 @@ struct RegisterStore {
 struct Threadstate {
 	Threadstate() :
 			store(new RegisterStore), flags(0), name(nullptr), end_stack(
-					nullptr), info(new utils::ThreadInfo), tID(0) {
+					nullptr), begin_stack(nullptr), info(new ThreadInfo), tID(0) {
 	}
 
 	~Threadstate() {
@@ -45,17 +44,15 @@ struct Threadstate {
 		delete info;
 	}
 
-
 	RegisterStore* store;
 	uint8_t flags;
 	std::function<void(void)> main;
 	const char *name;
 	uint8_t* end_stack;
-	beryl::utils::ThreadInfo* info;
+	uint8_t* begin_stack;
+	ThreadInfo* info;
 	uint32_t tID;
 };
-
-
 
 }
 
