@@ -14,15 +14,6 @@
 
 namespace beryl {
 
-void go();
-
-void create(const std::function<void(void)>&, const char* name = nullptr);
-
-void yield();
-
-void test_setup(const std::function<void(void)>&);
-
-void test_run();
 
 namespace utils {
 
@@ -36,6 +27,17 @@ namespace utils {
 	const ThreadInfo& getInfo();
 
 };
+
+
+void go();
+
+void create(const std::function<void(void)>&, const char* name = nullptr);
+
+void yield();
+
+void test_setup(const std::function<void(void)>&);
+
+void test_run();
 
 
 namespace memory {

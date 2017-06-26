@@ -10,42 +10,14 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <atomic>
-#include "beryl.hpp"
+#include "core.hpp"
 #include <sstream>
 
 namespace beryl {
 
-#define CREATED 0
-#define RUNNING 1
-#define SCHEDULER 99
-#define DEAD 2
-#define WAITING 3
-
-struct RegisterStore {
-	RegisterStore() :rbp(nullptr), rsp(nullptr), rax(nullptr), rdx(nullptr), rcx(nullptr) {};
-	uint8_t* rbp;
-	uint8_t* rsp;
-	uint8_t* rax;
-	uint8_t* rdx;
-	uint8_t* rcx;
-
-};
-
-struct Threadstate {
-	Threadstate() : store(new RegisterStore),
-		 flags(0), name(nullptr), end_stack(
-					nullptr), info(new utils::ThreadInfo), tID(0) {
-	}
-	;
-
-	RegisterStore* store;
-	uint8_t flags;
-	std::function<void(void)> main;
-	const char *name;
-	uint8_t* end_stack;
-	beryl::utils::ThreadInfo* info;
-	uint32_t tID;
-};
+static std::deque<Threadstate*> threadpool;
+static Threadstate* current = nullptr;
+static const uint64_t MAXSTACKSIZE = 10240;
 
 #define SAVESTATE(T) \
 	asm( "movq %%rbp, %1;"\
@@ -65,19 +37,12 @@ struct Threadstate {
 				: "r"(&T->store->rsp), "r"(&T->store->rbp)\
 				);
 
-static std::deque<Threadstate*> threadpool;
-
-static Threadstate* current = nullptr;
-
-static const uint64_t MAXSTACKSIZE = 10240;
 
 void create(const std::function<void(void)>& f, const char* name) {
 	static std::atomic<uint64_t> tID(0);
 	tID++;
 	auto t = new Threadstate;
 	auto *stack = static_cast<uint8_t*>(malloc(MAXSTACKSIZE));
-
-
 
 	t->store->rbp = stack + 4098;
 	t->store->rsp = stack + 4098;
@@ -86,7 +51,7 @@ void create(const std::function<void(void)>& f, const char* name) {
 	t->end_stack = stack;
 	t->tID = tID++;
 
-	threadpool.push_back(t);
+	threadpool.emplace_back(t);
 }
 
 void __always_inline terminate() {
@@ -102,14 +67,14 @@ static void __attribute__((noinline)) spawn() {
 }
 
 void __attribute__((noinline)) yield() {
-
 	//save the state of the current state if not dead
 	if (current->flags != DEAD) {
 		SAVESTATE(current);
 		//store thread for reinvocation
-		threadpool.push_back(current);
+		threadpool.emplace_back(current);
+	} else {
+		delete current;
 	}
-
 	Threadstate* t = threadpool.front();
 	threadpool.pop_front();
 	current = t;
@@ -135,9 +100,6 @@ void __attribute__((noinline)) go() {
 
 }
 
-
-
-
 namespace utils {
 
 const ThreadInfo& getInfo() {
@@ -151,6 +113,5 @@ const ThreadInfo& getInfo() {
 
 }
 }
-
 }
-;
+
