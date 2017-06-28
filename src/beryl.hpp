@@ -29,9 +29,8 @@ namespace utils {
 void sleep(uint32_t seconds);
 
 const ThreadInfo& getInfo();
-}
-
-;
+	
+};
 
 void go();
 
@@ -48,7 +47,6 @@ namespace memory {
 void resizeStack(uint32_t threadId, uint64_t nStackSize);
 }
 
-}
-;
+};
 
 #endif /* BERYL_HPP_ */
