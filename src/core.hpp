@@ -8,7 +8,7 @@
 #ifndef SRC_CORE_HPP_
 #define SRC_CORE_HPP_
 
-#include "beryl.hpp"
+#include <beryl>
 #include <memory>
 namespace beryl {
 
