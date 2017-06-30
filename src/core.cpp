@@ -43,16 +43,17 @@ static const uint64_t MAXSTACKSIZE = 10240;
 				 ,"r"(T->store->rdx)\
 				);
 
-static const ThreadInfo& generateInfo(Threadstate *state) {
+static const ThreadInfo* generateInfo(Threadstate *state) {
 	std::string s = std::string("test").append(std::to_string(state->tID));
 	state->info->name = s;
 	state->info->threadId = state->tID;
 	state->info->free_stack = state->store->rsp - state->end_stack;
-	return reinterpret_cast<ThreadInfo&>(*state->info);
+	return state->info;
+
 
 }
 
-const ThreadInfo& create(const std::function<void(void)>& f, const char* name) {
+const ThreadInfo create(const std::function<void(void)>& f, const char* name) {
 	static std::atomic<uint32_t> tID(0);
 	tID++;
 	auto t = new Threadstate;
@@ -68,7 +69,7 @@ const ThreadInfo& create(const std::function<void(void)>& f, const char* name) {
 
 	threadpool.emplace_back(t);
 
-	return generateInfo(t);
+	return *generateInfo(t);
 }
 
 void __always_inline terminate() {
@@ -120,10 +121,9 @@ void __attribute__((noinline)) go() {
 
 namespace utils {
 
-const ThreadInfo& getInfo() {
+const ThreadInfo getInfo() {
 	SAVESTATE(current);
-
-	return generateInfo(current);
+	return *generateInfo(current);
 
 }
 }

@@ -39,7 +39,7 @@ int main() {
 	auto info = beryl::create(t);
 
 	auto info2 = beryl::create([info](){
-		beryl::memory::resizeStack(info.threadId, 20480);
+		//beryl::memory::resizeStack(info.threadId, 20480);
 	});
 
 	cout << "created " << info.name << " Lol" << endl;

@@ -11,8 +11,8 @@
 #include <functional>
 #include <stdint.h>
 #include <string>
-
 namespace beryl {
+
 
 struct ThreadInfo {
 
@@ -24,17 +24,18 @@ struct ThreadInfo {
 	uint32_t free_stack;
 };
 
+
 namespace utils {
 
 void sleep(uint32_t seconds);
 
-const ThreadInfo& getInfo();
-	
+
+const ThreadInfo getInfo();
 };
 
 void go();
 
-const ThreadInfo& create(const std::function<void(void)>&, const char* name = nullptr);
+const ThreadInfo create(const std::function<void(void)>&, const char* name = nullptr);
 
 void yield();
 

@@ -9,7 +9,7 @@
 #define SRC_CORE_HPP_
 
 #include "beryl.hpp"
-
+#include <memory>
 namespace beryl {
 
 #define CREATED 0
@@ -41,7 +41,6 @@ struct Threadstate {
 
 	~Threadstate() {
 		delete store;
-		delete info;
 	}
 
 	RegisterStore* store;
@@ -50,7 +49,7 @@ struct Threadstate {
 	const char *name;
 	uint8_t* end_stack;
 	uint8_t* begin_stack;
-	ThreadInfo* info;
+	ThreadInfo *info;
 	uint32_t tID;
 };
 
