@@ -1,5 +1,5 @@
 # Beryl - A green thread library
-
+[![Build Status](https://travis-ci.org/minzchicken/Beryl.svg?branch=master)](https://travis-ci.org/minzchicken/Beryl)
 
 ![beryl icon](img/berylsvg.png)
 
