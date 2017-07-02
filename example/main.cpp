@@ -16,7 +16,6 @@ void __attribute__((noinline)) test(int a, int b) {
 	cout << a + b << endl;
 	cout << "thread: " << info.name << " has " << info.free_stack
 			<< " Bytes free on its stack" << endl;
-	beryl::memory::resizeStack(info.threadId, 20480);
 
 }
 
@@ -40,6 +39,10 @@ int main() {
 
 	auto info = beryl::create(t);
 
+	beryl::create([info](){
+	    beryl::memory::resizeStack(info.threadId, 20000);
+	  });
+	
 	beryl::go();
 
 	return 0;
