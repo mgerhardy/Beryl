@@ -21,36 +21,22 @@ namespace beryl {
 struct ThreadInfo;
 
 struct RegisterStore {
-	RegisterStore() :
-			rbp(nullptr), rsp(nullptr), rax(nullptr), rdx(nullptr), rcx(nullptr) {
-	}
-	;
-	uint8_t* rbp;
-	uint8_t* rsp;
-	uint8_t* rax;
-	uint8_t* rdx;
-	uint8_t* rcx;
-
+	uint8_t* rbp = nullptr;
+	uint8_t* rsp = nullptr;
+	uint8_t* rax = nullptr;
+	uint8_t* rdx = nullptr;
+	uint8_t* rcx = nullptr;
 };
 
 struct Threadstate {
-	Threadstate() :
-			store(new RegisterStore), flags(0), name(nullptr), end_stack(
-					nullptr), begin_stack(nullptr), info(new ThreadInfo), tID(0) {
-	}
-
-	~Threadstate() {
-		delete store;
-	}
-
-	RegisterStore* store;
-	uint8_t flags;
+	RegisterStore store;
+	uint8_t flags = 0u;
 	std::function<void(void)> main;
-	const char *name;
-	uint8_t* end_stack;
-	uint8_t* begin_stack;
-	ThreadInfo *info;
-	uint32_t tID;
+	const char *name = nullptr;
+	uint8_t* end_stack = nullptr;
+	uint8_t* begin_stack = nullptr;
+	ThreadInfo info;
+	uint32_t tID = 0u;
 };
 
 }
