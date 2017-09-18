@@ -45,23 +45,21 @@ static const uint64_t MAXSTACKSIZE = 10240;
 	,"r"(T->store->rdx)				\
       );
 
-static const ThreadInfo* generateInfo(Threadstate *state) {
-	std::string s = std::string("test").append(std::to_string(state->tID));
-	state->info->name = s;
-	state->info->threadId = state->tID;
-	state->info->free_stack = state->store->rsp - state->end_stack;
-	return state->info;
-
+static const ThreadInfo& generateInfo(Threadstate* state) {
+	const std::string& s = std::string("test").append(std::to_string(state->tID));
+	state->info.name = std::move(s);
+	state->info.threadId = state->tID;
+	state->info.free_stack = state->store->rsp - state->end_stack;
+	return state.info;
 }
 
-const ThreadInfo create(const std::function<void(void)>& f, const char* name) {
+ThreadInfo create(const std::function<void(void)>& f, const char* name) {
 	static std::atomic<uint32_t> tID(0);
-	tID++;
-	auto t = new Threadstate;
+	auto *t = new Threadstate;
 	auto *stack = static_cast<uint8_t*>(malloc(MAXSTACKSIZE));
 
-	t->store->rbp = stack + MAXSTACKSIZE - 1;
-	t->store->rsp = stack + MAXSTACKSIZE - 1;
+	t->store.rbp = stack + MAXSTACKSIZE - 1;
+	t->store.rsp = stack + MAXSTACKSIZE - 1;
 	t->main = f;
 	t->name = name;
 	t->end_stack = stack;
@@ -70,7 +68,7 @@ const ThreadInfo create(const std::function<void(void)>& f, const char* name) {
 
 	threadpool.emplace_back(t);
 
-	return *generateInfo(t);
+	return generateInfo(t);
 }
 
 void __always_inline terminate() {
@@ -103,7 +101,6 @@ void __attribute__((noinline)) yield() {
 		return;
 	}
 	RESTORESTATE(t);
-
 }
 
 void __attribute__((noinline)) go() {
@@ -115,9 +112,7 @@ void __attribute__((noinline)) go() {
 			return;
 		}
 		yield();
-
 	}
-
 }
 
 namespace utils {
@@ -125,14 +120,13 @@ namespace utils {
 const ThreadInfo getInfo() {
 	SAVESTATE(current);
 	return *generateInfo(current);
-
 }
+
 }
 
 namespace memory {
 
 bool resizeStack(uint32_t threadId, uint64_t nStackSize) {
-
 	using std::cerr;
 	using std::endl;
 	//thread should never resize itself when its running
@@ -152,7 +146,6 @@ bool resizeStack(uint32_t threadId, uint64_t nStackSize) {
 					+ ((uint64_t) iter->begin_stack
 							- (uint64_t) iter->store->rsp) - 1;
 			iter->end_stack = nStack;
-
 		}
 	}
 	return false;
